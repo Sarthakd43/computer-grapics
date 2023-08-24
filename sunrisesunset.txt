@@ -1,0 +1,66 @@
+#include<GL/glut.h>
+#include<GL/glu.h>
+#include<GL/gl.h>
+#include <windows.h>
+float sun_rot=0;
+// void keyboard();
+void init()
+{
+    glClearColor(0.0,0.0,0.0,1.0);
+    glEnable(GL_DEPTH_TEST);
+}
+float max(float a, float b){
+    if(a>b)return a;
+    else return b;
+}
+void display()
+{
+    glClearColor(0.7/max(1, sun_rot/100),0.7/max(1, sun_rot/100),1.0/max(1, sun_rot/100),1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    glColor3f(1, (2*sun_rot)/360, 0);
+    glPushMatrix();
+    glTranslatef(0, -10, 0);
+    glRotatef(sun_rot, 0, 0, -1);
+    glTranslatef(10, 0, 0);
+    glutSolidSphere(1, 20, 20);
+    glPopMatrix();
+    glColor3f(1/max(1, sun_rot/100), 0.7/max(1, sun_rot/100), 0.7/max(1, sun_rot/100));
+    glBegin(GL_TRIANGLES);
+    glVertex3f(-10, -10, 1);
+        glVertex3f(0, 0, 1);
+    glVertex3f(10, -10, 1);
+    glEnd();
+    glutSwapBuffers(); 
+    
+}
+void reshape(int w,int h){
+    glViewport(0,0,w,h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-10, 10, -10, 10); 
+    glMatrixMode(GL_MODELVIEW);
+}
+void timer(int){
+   glutPostRedisplay();
+   sun_rot+=1;
+   if(sun_rot==360)sun_rot=0;
+   glutTimerFunc(1000/60,timer,0);
+   
+}
+
+int main(int argc,char **argv){
+    glutInit(&argc,argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE |GLUT_DEPTH);
+    glutInitWindowPosition(0,0);
+    glutInitWindowSize(500,500);
+    init();
+    glutCreateWindow("Window__1");
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    // glutKeyboardFunc(keyboard);
+    glutTimerFunc(0,timer,0);
+    glutMainLoop();
+}
+
+
